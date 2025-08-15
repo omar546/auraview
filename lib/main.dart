@@ -2119,10 +2119,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
               _buildQuickStatItem(
                 _isArabic ? 'متوسط المزاج' : 'Avg Mood',
-                avgMood.toStringAsFixed(1),
+                '${avgMood.toStringAsFixed(1)}',
                 Icons.sentiment_satisfied,
                 AppTheme.secondaryColor,
+                suffix: TextSpan(
+                  text: '/5',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.grey,
+                  ),
+                ),
               ),
+
+
               _buildQuickStatItem(
                 _isArabic ? 'إجمالي التمرين' : 'Total Exercise',
                 '${(totalExercise / 60).toStringAsFixed(0)}h',
@@ -2141,6 +2151,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     String value,
     IconData icon,
     Color color,
+  {TextSpan? suffix}
   ) {
     return Column(
       children: [
@@ -2153,12 +2164,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           child: Icon(icon, color: color, size: 24),
         ),
         SizedBox(height: 8),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: color,
+        RichText(
+          text: TextSpan(
+            text: value,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+              // Ensure default text style from theme is used for family, etc.
+              fontFamily: Theme.of(context).textTheme.bodyLarge?.fontFamily,
+            ),
+            children: suffix != null ? [suffix] : [],
+
           ),
         ),
         Text(
