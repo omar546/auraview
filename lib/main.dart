@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,12 +23,14 @@ class AuraViewApp extends StatefulWidget {
   final SharedPreferences prefs;
 
   static void setLocale(BuildContext context, Locale newLocale) {
-    _AuraViewAppState? state = context.findAncestorStateOfType<_AuraViewAppState>();
+    _AuraViewAppState? state =
+        context.findAncestorStateOfType<_AuraViewAppState>();
     state?.setLocale(newLocale);
   }
 
   static void setThemeMode(BuildContext context, ThemeMode themeMode) {
-    _AuraViewAppState? state = context.findAncestorStateOfType<_AuraViewAppState>();
+    _AuraViewAppState? state =
+        context.findAncestorStateOfType<_AuraViewAppState>();
     state?.setThemeMode(themeMode);
   }
 
@@ -53,6 +57,7 @@ class _AuraViewAppState extends State<AuraViewApp> {
       }
     });
   }
+
   Future<void> _loadPreferences() async {
     final String? languageCode = widget.prefs.getString('language_code');
     if (languageCode != null) {
@@ -60,8 +65,7 @@ class _AuraViewAppState extends State<AuraViewApp> {
       // Ensure Bidi is initialized with the correct directionality
       // This might not be strictly necessary here if MaterialApp handles it,
       // but it's a good practice if you encounter directionality issues.
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {});
     }
     final String? theme = widget.prefs.getString('theme_mode');
     if (theme == 'light') {
@@ -94,7 +98,7 @@ class _AuraViewAppState extends State<AuraViewApp> {
     }
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'AuraView',
@@ -108,10 +112,7 @@ class _AuraViewAppState extends State<AuraViewApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [
-        Locale('en', ''),
-        Locale('ar', ''),
-      ],
+      supportedLocales: [Locale('en', ''), Locale('ar', '')],
       localeResolutionCallback: (locale, supportedLocales) {
         for (var supportedLocale in supportedLocales) {
           if (supportedLocale.languageCode == locale?.languageCode &&
@@ -150,8 +151,8 @@ class _AppWrapperState extends State<AppWrapper> {
     // Check if the key exists. If not, it's the first time.
     final hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
     setState(() {
-        _isFirstTime = !hasSeenOnboarding;
-        _isLoading = false;
+      _isFirstTime = !hasSeenOnboarding;
+      _isLoading = false;
     });
   }
 
@@ -167,8 +168,11 @@ class _AppWrapperState extends State<AppWrapper> {
       );
     }
 
-    if (_isFirstTime == null) { // Should not happen if _isLoading is false, but as a safeguard
-      return Scaffold(body: Center(child: Text("Error determining onboarding status.")));
+    if (_isFirstTime == null) {
+      // Should not happen if _isLoading is false, but as a safeguard
+      return Scaffold(
+        body: Center(child: Text("Error determining onboarding status.")),
+      );
     }
 
     return _isFirstTime! ? OnboardingScreen() : MainApp();
@@ -220,8 +224,14 @@ class AppTheme {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
     textTheme: TextTheme(
-      headlineLarge: TextStyle(color: Color(0xFF2D3436), fontWeight: FontWeight.bold),
-      headlineMedium: TextStyle(color: Color(0xFF2D3436), fontWeight: FontWeight.w600),
+      headlineLarge: TextStyle(
+        color: Color(0xFF2D3436),
+        fontWeight: FontWeight.bold,
+      ),
+      headlineMedium: TextStyle(
+        color: Color(0xFF2D3436),
+        fontWeight: FontWeight.w600,
+      ),
       bodyLarge: TextStyle(color: Color(0xFF636E72)),
       bodyMedium: TextStyle(color: Color(0xFF636E72)),
     ),
@@ -259,8 +269,14 @@ class AppTheme {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
     textTheme: TextTheme(
-      headlineLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-      headlineMedium: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+      headlineLarge: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+      ),
+      headlineMedium: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.w600,
+      ),
       bodyLarge: TextStyle(color: Color(0xFFB2BEC3)),
       bodyMedium: TextStyle(color: Color(0xFFB2BEC3)),
     ),
@@ -349,8 +365,9 @@ class HealthLogService {
 
   static Future<void> saveEntry(HealthLogEntry entry) async {
     final existingIndex = _box.values.toList().indexWhere(
-            (e) => DateFormat('yyyy-MM-dd').format(e.date) ==
-            DateFormat('yyyy-MM-dd').format(entry.date)
+      (e) =>
+          DateFormat('yyyy-MM-dd').format(e.date) ==
+          DateFormat('yyyy-MM-dd').format(entry.date),
     );
 
     if (existingIndex != -1) {
@@ -367,7 +384,7 @@ class HealthLogService {
   static HealthLogEntry? getTodaysEntry() {
     final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
     final entries = _box.values.where(
-          (entry) => DateFormat('yyyy-MM-dd').format(entry.date) == today,
+      (entry) => DateFormat('yyyy-MM-dd').format(entry.date) == today,
     );
     // If no entry for today, return null. The UI will handle prompting for a new log.
     return entries.isEmpty ? null : entries.first;
@@ -414,20 +431,19 @@ class _MainAppState extends State<MainApp> {
     if (todaysEntry == null) {
       // Ensure context is still mounted before navigating
       if (mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => DailyLogFlow()),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => DailyLogFlow()));
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: HomeScreen(),
-    );
+    return Scaffold(body: HomeScreen());
   }
 }
+
 // Onboarding Screen
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -452,7 +468,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     ),
     OnboardingPage(
       title: 'Daily Logging',
-      subtitle: 'Record your mood, sleep, water intake, and exercise effortlessly',
+      subtitle:
+          'Record your mood, sleep, water intake, and exercise effortlessly',
       icon: Icons.today_outlined,
       color: AppTheme.secondaryColor,
     ),
@@ -493,23 +510,22 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   void _finishOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('has_seen_onboarding', true);
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => MainApp()),
-    );
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (context) => MainApp()));
   }
 
   @override
   Widget build(BuildContext context) {
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Scaffold(
       body: Container(
         // Ensure the gradient covers the entire screen, including under the status bar
         // if the SafeArea is not handled by the system (e.g., on some Android versions)
         height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-        ),
+        decoration: BoxDecoration(gradient: AppTheme.primaryGradient),
         child: SafeArea(
           child: Column(
             children: [
@@ -593,7 +609,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
               _pages.length,
-                  (index) => Container(
+              (index) => Container(
                 width: _currentPage == index ? 24 : 8,
                 height: 8,
                 margin: EdgeInsets.symmetric(horizontal: 4),
@@ -626,14 +642,15 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               else
                 SizedBox.shrink(),
               ElevatedButton(
-                onPressed: _currentPage == _pages.length - 1
-                    ? _finishOnboarding
-                    : () {
-                  _pageController.nextPage(
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                },
+                onPressed:
+                    _currentPage == _pages.length - 1
+                        ? _finishOnboarding
+                        : () {
+                          _pageController.nextPage(
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: AppTheme.primaryColor,
@@ -695,7 +712,14 @@ class _DailyLogFlowState extends State<DailyLogFlow>
   double _sleepHours = 8.0;
 
   final List<String> _exerciseTypes = [
-    'Walking', 'Running', 'Cycling', 'Swimming', 'Yoga', 'Gym', 'Dancing', 'Other'
+    'Walking',
+    'Running',
+    'Cycling',
+    'Swimming',
+    'Yoga',
+    'Gym',
+    'Dancing',
+    'Other',
   ];
 
   @override
@@ -713,18 +737,13 @@ class _DailyLogFlowState extends State<DailyLogFlow>
     _slideAnimation = Tween<Offset>(
       begin: Offset(1.0, 0.0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(
+      CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+    );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.easeOutBack,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.easeOutBack),
+    );
 
     _slideController.forward();
     _scaleController.forward();
@@ -776,10 +795,12 @@ class _DailyLogFlowState extends State<DailyLogFlow>
 
   @override
   Widget build(BuildContext context) {
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Scaffold(
-      appBar: AppBar( // Add an AppBar for the back button
+      appBar: AppBar(
+        // Add an AppBar for the back button
         leading: BackButton(
           onPressed: () {
             // Navigate back to the HomeScreen or the previous relevant screen.
@@ -792,9 +813,7 @@ class _DailyLogFlowState extends State<DailyLogFlow>
         elevation: 0, // Remove shadow
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-        ),
+        decoration: BoxDecoration(gradient: AppTheme.primaryGradient),
         child: SafeArea(
           child: Column(
             children: [
@@ -825,7 +844,9 @@ class _DailyLogFlowState extends State<DailyLogFlow>
       child: Column(
         children: [
           Text(
-            Localizations.localeOf(context).languageCode == 'ar' ? 'السجل اليومي' : 'Daily Log',
+            Localizations.localeOf(context).languageCode == 'ar'
+                ? 'السجل اليومي'
+                : 'Daily Log',
             style: TextStyle(
               fontSize: isLandscape ? 20 : 24,
               fontWeight: FontWeight.bold,
@@ -850,7 +871,10 @@ class _DailyLogFlowState extends State<DailyLogFlow>
         scale: _scaleAnimation,
         child: _buildStepContainer(
           isLandscape,
-          title: Localizations.localeOf(context).languageCode == 'ar' ? 'كيف حالك اليوم؟' : 'How are you feeling?',
+          title:
+              Localizations.localeOf(context).languageCode == 'ar'
+                  ? 'كيف حالك اليوم؟'
+                  : 'How are you feeling?',
           illustration: _buildMoodIllustration(),
           slider: _buildMoodSlider(),
         ),
@@ -865,7 +889,10 @@ class _DailyLogFlowState extends State<DailyLogFlow>
         scale: _scaleAnimation,
         child: _buildStepContainer(
           isLandscape,
-          title: Localizations.localeOf(context).languageCode == 'ar' ? 'كمية المية النهاردة؟' : 'Water intake today?',
+          title:
+              Localizations.localeOf(context).languageCode == 'ar'
+                  ? 'كمية المية النهاردة؟'
+                  : 'Water intake today?',
           illustration: _buildWaterIllustration(),
           slider: _buildWaterSlider(),
         ),
@@ -880,7 +907,10 @@ class _DailyLogFlowState extends State<DailyLogFlow>
         scale: _scaleAnimation,
         child: _buildStepContainer(
           isLandscape,
-          title: Localizations.localeOf(context).languageCode == 'ar' ? 'اتمرنت النهاردة؟' : 'Exercise today?',
+          title:
+              Localizations.localeOf(context).languageCode == 'ar'
+                  ? 'اتمرنت النهاردة؟'
+                  : 'Exercise today?',
           illustration: _buildExerciseIllustration(),
           slider: _buildExerciseControls(),
         ),
@@ -895,7 +925,10 @@ class _DailyLogFlowState extends State<DailyLogFlow>
         scale: _scaleAnimation,
         child: _buildStepContainer(
           isLandscape,
-          title: Localizations.localeOf(context).languageCode == 'ar' ? 'نمت كام ساعة؟' : 'How many hours of sleep?',
+          title:
+              Localizations.localeOf(context).languageCode == 'ar'
+                  ? 'نمت كام ساعة؟'
+                  : 'How many hours of sleep?',
           illustration: _buildSleepIllustration(),
           slider: _buildSleepSlider(),
         ),
@@ -903,7 +936,8 @@ class _DailyLogFlowState extends State<DailyLogFlow>
     );
   }
 
-  Widget _buildStepContainer(bool isLandscape, {
+  Widget _buildStepContainer(
+    bool isLandscape, {
     required String title,
     required Widget illustration,
     required Widget slider,
@@ -947,9 +981,7 @@ class _DailyLogFlowState extends State<DailyLogFlow>
             margin: EdgeInsets.symmetric(horizontal: 8),
             child: Text(
               moodEmojis[index],
-              style: TextStyle(
-                fontSize: isSelected ? 48 : 32,
-              ),
+              style: TextStyle(fontSize: isSelected ? 48 : 32),
             ),
           );
         }),
@@ -963,7 +995,8 @@ class _DailyLogFlowState extends State<DailyLogFlow>
         activeTrackColor: Colors.white,
         inactiveTrackColor: Colors.white.withOpacity(0.3),
         thumbColor: Colors.white,
-        trackHeight: 8.0, // Make slider thicker
+        trackHeight: 8.0,
+        // Make slider thicker
         thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12),
       ),
       child: Slider(
@@ -1022,9 +1055,10 @@ class _DailyLogFlowState extends State<DailyLogFlow>
             min: 0,
             max: 12,
             divisions: 12,
-            label: Localizations.localeOf(context).languageCode == 'ar'
-                ? '${_waterIntake.round()} كوبايات'
-                : '${_waterIntake.round()} glasses',
+            label:
+                Localizations.localeOf(context).languageCode == 'ar'
+                    ? '${_waterIntake.round()} كوبايات'
+                    : '${_waterIntake.round()} glasses',
             onChanged: (value) {
               setState(() {
                 _waterIntake = value;
@@ -1041,11 +1075,7 @@ class _DailyLogFlowState extends State<DailyLogFlow>
       height: 120,
       child: Column(
         children: [
-          Icon(
-            _getExerciseIcon(_exerciseType),
-            size: 64,
-            color: Colors.white,
-          ),
+          Icon(_getExerciseIcon(_exerciseType), size: 64, color: Colors.white),
           SizedBox(height: 16),
           Text(
             _exerciseType,
@@ -1097,9 +1127,13 @@ class _DailyLogFlowState extends State<DailyLogFlow>
                   label: Text(
                     _exerciseTypes[index],
                     style: TextStyle(
-                      color: isSelected
-                          ? AppTheme.primaryColor
-                          : (Theme.of(context).brightness == Brightness.light ? Colors.black87 : Colors.white),
+                      color:
+                          isSelected
+                              ? AppTheme.primaryColor
+                              : (Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Colors.black87
+                                  : Colors.white),
                     ),
                   ),
                   selected: isSelected,
@@ -1138,9 +1172,10 @@ class _DailyLogFlowState extends State<DailyLogFlow>
             min: 0,
             max: 180,
             divisions: 18,
-            label: Localizations.localeOf(context).languageCode == 'ar'
-                ? '${_exerciseMinutes.round()} دقيقة'
-                : '${_exerciseMinutes.round()} min',
+            label:
+                Localizations.localeOf(context).languageCode == 'ar'
+                    ? '${_exerciseMinutes.round()} دقيقة'
+                    : '${_exerciseMinutes.round()} min',
             onChanged: (value) {
               setState(() {
                 _exerciseMinutes = value.round();
@@ -1166,7 +1201,8 @@ class _DailyLogFlowState extends State<DailyLogFlow>
                 child: Icon(
                   isFilled ? Icons.bedtime : Icons.bedtime_outlined,
                   size: 20,
-                  color: isFilled ? Colors.white : Colors.white.withOpacity(0.3),
+                  color:
+                      isFilled ? Colors.white : Colors.white.withOpacity(0.3),
                 ),
               );
             }),
@@ -1193,7 +1229,8 @@ class _DailyLogFlowState extends State<DailyLogFlow>
         activeTrackColor: Colors.white,
         inactiveTrackColor: Colors.white.withOpacity(0.3),
         thumbColor: Colors.white,
-        trackHeight: 8.0, // Make slider thicker
+        trackHeight: 8.0,
+        // Make slider thicker
         thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12),
       ),
       child: Slider(
@@ -1201,9 +1238,10 @@ class _DailyLogFlowState extends State<DailyLogFlow>
         min: 0,
         max: 12,
         divisions: 24,
-        label: Localizations.localeOf(context).languageCode == 'ar'
-            ? '${_sleepHours.toStringAsFixed(1)} ساعات'
-            : '${_sleepHours.toStringAsFixed(1)} hours',
+        label:
+            Localizations.localeOf(context).languageCode == 'ar'
+                ? '${_sleepHours.toStringAsFixed(1)} ساعات'
+                : '${_sleepHours.toStringAsFixed(1)} hours',
         onChanged: (value) {
           setState(() {
             _sleepHours = value;
@@ -1232,7 +1270,9 @@ class _DailyLogFlowState extends State<DailyLogFlow>
               },
               icon: Icon(Icons.arrow_back, color: Colors.white70),
               label: Text(
-                Localizations.localeOf(context).languageCode == 'ar' ? 'رجوع' : 'Back',
+                Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'رجوع'
+                    : 'Back',
                 style: TextStyle(color: Colors.white70),
               ),
             )
@@ -1246,8 +1286,12 @@ class _DailyLogFlowState extends State<DailyLogFlow>
             ),
             label: Text(
               _currentStep == 3
-                  ? (Localizations.localeOf(context).languageCode == 'ar' ? 'حفظ السجل' : 'Save Log')
-                  : (Localizations.localeOf(context).languageCode == 'ar' ? 'التالي' : 'Next'),
+                  ? (Localizations.localeOf(context).languageCode == 'ar'
+                      ? 'حفظ السجل'
+                      : 'Save Log')
+                  : (Localizations.localeOf(context).languageCode == 'ar'
+                      ? 'التالي'
+                      : 'Next'),
               style: TextStyle(
                 color: AppTheme.primaryColor,
                 fontWeight: FontWeight.w600,
@@ -1266,6 +1310,7 @@ class _DailyLogFlowState extends State<DailyLogFlow>
     );
   }
 }
+
 // Home Screen
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -1292,21 +1337,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
 
     _slideAnimation = Tween<Offset>(
       begin: Offset(0.0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
+    );
 
     _animationController.forward();
   }
@@ -1333,7 +1373,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600;
 
@@ -1348,7 +1389,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             child: SingleChildScrollView(
               padding: EdgeInsets.all(isTablet ? 24 : 16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   _buildWelcomeSection(),
                   SizedBox(height: 24),
@@ -1376,41 +1417,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return AppBar(
       title: Text('AuraView'),
       actions: [
-        PopupMenuButton(
-          icon: Icon(Icons.more_vert),
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 'theme',
-              child: Row(
-                children: [
-                  Icon(_isDarkMode ? Icons.light_mode : Icons.dark_mode),
-                  SizedBox(width: 8),
-                  Text(_isDarkMode ? 'Light Mode' : 'Dark Mode'),
-                ],
-              ),
-            ),
-            // PopupMenuItem(
-            //   value: 'language',
-            //   child: Row(
-            //     children: [
-            //       Icon(Icons.language),
-            //       SizedBox(width: 8),
-            //       Text(_isArabic ? 'English' : 'العربية'),
-            //     ],
-            //   ),
-            // ),
-            PopupMenuItem(
-              value: 'history',
-              child: Row(
-                children: [
-                  Icon(Icons.history),
-                  SizedBox(width: 8),
-                  Text('View History'),
-                ],
-              ),
-            ),
-          ],
-          onSelected: _handleMenuAction,
+        IconButton(
+          icon: Icon(_isDarkMode ? Icons.light_mode : Icons.dark_mode),
+          tooltip: _isDarkMode ? 'Light Mode' : 'Dark Mode',
+          onPressed: () {
+            _handleMenuAction('theme');
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.view_list_outlined), // Changed icon
+          tooltip: 'View History',
+          onPressed: () {
+            _handleMenuAction('history');
+          },
         ),
       ],
     );
@@ -1422,7 +1441,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         setState(() {
           _isDarkMode = !_isDarkMode;
         });
-        AuraViewApp.setThemeMode(context, _isDarkMode ? ThemeMode.dark : ThemeMode.light);
+        AuraViewApp.setThemeMode(
+          context,
+          _isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        );
         _savePreferences();
         break;
       case 'language':
@@ -1437,47 +1459,69 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         _savePreferences();
         break;
       case 'history':
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => HistoryScreen()),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => HistoryScreen()));
         break;
     }
   }
 
   Widget _buildWelcomeSection() {
     final now = DateTime.now();
-    final timeOfDay = now.hour < 12 ? 'Morning' : now.hour < 17 ? 'Afternoon' : 'Evening';
+    final timeOfDay =
+        now.hour < 12
+            ? 'Morning'
+            : now.hour < 17
+            ? 'Afternoon'
+            : 'Evening';
+    //todo
+    //     return Card(
+    //       elevation: 8.0,
+    //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+    //       child: Container(
+    //         padding: EdgeInsets.all(24),
+    //         decoration: BoxDecoration(
+    //           gradient: LinearGradient(
+    //             colors: [AppTheme.primaryColor.withOpacity(0.8), AppTheme.secondaryColor.withOpacity(0.8)],
+    //             begin: Alignment.topLeft,
+    //             end: Alignment.bottomRight,
+    //           ),
+    //           borderRadius: BorderRadius.circular(20.0),
+    //           boxShadow: [
+    //             BoxShadow(
+    //               color: AppTheme.primaryColor.withOpacity(0.3),
+    //               blurRadius: 15,
+    //               offset: Offset(0, 8),
+    //             ),
+    //           ],
+    //         ),
+    //         child: Column(
+    //           crossAxisAlignment: CrossAxisAlignment.start,
+    //           children: [
+    //             Text(
+    //               _isArabic ? 'مساء الخير!' : 'Good $timeOfDay!',
+    //               style: TextStyle(
+    //                 fontSize: 28,
+    //                 fontWeight: FontWeight.bold,
+    //                 color: Colors.white,
+    //                 letterSpacing: 0.5,
+    //               ),
+    //             ),
+    //             SizedBox(height: 12),
+    //             Text(
+    //               _isArabic ? 'كيف كان يومك اليوم؟' : 'How has your day been?',
+    //               style: TextStyle(
+    //                 fontSize: 18,
+    //                 color: Colors.white.withOpacity(0.95),
+    //                 height: 1.4,
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     );
 
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: AppTheme.primaryGradient,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _isArabic ? 'مساء الخير!' : 'Good $timeOfDay!',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            _isArabic
-                ? 'كيف كان يومك اليوم؟'
-                : 'How has your day been?',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white.withOpacity(0.9),
-            ),
-          ),
-        ],
-      ),
-    );
+    return AnimatedGreetingCard(isArabic: _isArabic, timeOfDay: timeOfDay);
   }
 
   Widget _buildTodaysSummary() {
@@ -1553,7 +1597,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  _isArabic ? 'مكتمل' : 'Complete',
+                  _isArabic ? 'مكتمل' : 'Logged',
                   style: TextStyle(
                     color: AppTheme.accentColor,
                     fontWeight: FontWeight.w600,
@@ -1677,9 +1721,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           borderRadius: BorderRadius.circular(6),
         ),
         child: Text(
-          _isArabic
-              ? (label == 'Week' ? 'أسبوع' : 'شهر')
-              : label,
+          _isArabic ? (label == 'Week' ? 'أسبوع' : 'شهر') : label,
           style: TextStyle(
             color: isSelected ? Colors.white : AppTheme.primaryColor,
             fontWeight: FontWeight.w600,
@@ -1718,9 +1760,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildMoodChart() {
-    final entries = _selectedPeriod == 0
-        ? HealthLogService.getWeeklyEntries()
-        : HealthLogService.getMonthlyEntries();
+    final entries =
+        _selectedPeriod == 0
+            ? HealthLogService.getWeeklyEntries()
+            : HealthLogService.getMonthlyEntries();
 
     if (entries.isEmpty) {
       return _buildEmptyChart(_isArabic ? 'المزاج' : 'Mood Trends');
@@ -1745,9 +1788,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         children: [
           Text(
             _isArabic ? 'اتجاهات المزاج' : 'Mood Trends',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontSize: 16,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontSize: 16),
           ),
           SizedBox(height: 16),
           Expanded(
@@ -1758,12 +1801,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 borderData: FlBorderData(show: false),
                 lineBarsData: [
                   LineChartBarData(
-                    spots: entries.asMap().entries.map((entry) {
-                      return FlSpot(
-                        entry.key.toDouble(),
-                        entry.value.mood,
-                      );
-                    }).toList(),
+                    spots:
+                        entries.asMap().entries.map((entry) {
+                          return FlSpot(entry.key.toDouble(), entry.value.mood);
+                        }).toList(),
                     isCurved: true,
                     color: AppTheme.primaryColor,
                     barWidth: 3,
@@ -1795,15 +1836,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildWaterChart() {
-    final entries = _selectedPeriod == 0
-        ? HealthLogService.getWeeklyEntries()
-        : HealthLogService.getMonthlyEntries();
+    final entries =
+        _selectedPeriod == 0
+            ? HealthLogService.getWeeklyEntries()
+            : HealthLogService.getMonthlyEntries();
 
     if (entries.isEmpty) {
       return _buildEmptyChart(_isArabic ? 'استهلاك الماء' : 'Water Intake');
     }
 
-    final barWidth = entries.length <= 7 ? 32.0 : 16.0; // Adjust bar width based on number of entries
+    final barWidth =
+        entries.length <= 7
+            ? 32.0
+            : 16.0; // Adjust bar width based on number of entries
 
     return Container(
       height: 200,
@@ -1824,9 +1869,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         children: [
           Text(
             _isArabic ? 'استهلاك الماء' : 'Water Intake',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontSize: 16,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontSize: 16),
           ),
           SizedBox(height: 16),
           Expanded(
@@ -1835,19 +1880,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 gridData: FlGridData(show: false),
                 titlesData: FlTitlesData(show: false),
                 borderData: FlBorderData(show: false),
-                barGroups: entries.asMap().entries.map((entry) {
-                  return BarChartGroupData(
-                    x: entry.key,
-                    barRods: [
-                      BarChartRodData(
-                        toY: entry.value.waterIntake,
-                        color: AppTheme.secondaryColor,
-                        width: barWidth,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ],
-                  );
-                }).toList(),
+                barGroups:
+                    entries.asMap().entries.map((entry) {
+                      return BarChartGroupData(
+                        x: entry.key,
+                        barRods: [
+                          BarChartRodData(
+                            toY: entry.value.waterIntake,
+                            color: AppTheme.secondaryColor,
+                            width: barWidth,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ],
+                      );
+                    }).toList(),
                 maxY: 12,
               ),
             ),
@@ -1858,15 +1904,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildExerciseChart() {
-    final entries = _selectedPeriod == 0
-        ? HealthLogService.getWeeklyEntries()
-        : HealthLogService.getMonthlyEntries();
+    final entries =
+        _selectedPeriod == 0
+            ? HealthLogService.getWeeklyEntries()
+            : HealthLogService.getMonthlyEntries();
 
     if (entries.isEmpty) {
       return _buildEmptyChart(_isArabic ? 'التمرين' : 'Exercise');
     }
 
-    final totalMinutes = entries.fold<int>(0, (sum, entry) => sum + entry.exerciseMinutes);
+    final totalMinutes = entries.fold<int>(
+      0,
+      (sum, entry) => sum + entry.exerciseMinutes,
+    );
     final avgMinutes = entries.isNotEmpty ? totalMinutes / entries.length : 0;
 
     return Container(
@@ -1888,9 +1938,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         children: [
           Text(
             _isArabic ? 'التمرين' : 'Exercise',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontSize: 14,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontSize: 14),
           ),
           Spacer(),
           Text(
@@ -1914,15 +1964,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildSleepChart() {
-    final entries = _selectedPeriod == 0
-        ? HealthLogService.getWeeklyEntries()
-        : HealthLogService.getMonthlyEntries();
+    final entries =
+        _selectedPeriod == 0
+            ? HealthLogService.getWeeklyEntries()
+            : HealthLogService.getMonthlyEntries();
 
     if (entries.isEmpty) {
       return _buildEmptyChart(_isArabic ? 'النوم' : 'Sleep');
     }
 
-    final totalHours = entries.fold<double>(0, (sum, entry) => sum + entry.sleepHours);
+    final totalHours = entries.fold<double>(
+      0,
+      (sum, entry) => sum + entry.sleepHours,
+    );
     final avgHours = entries.isNotEmpty ? totalHours / entries.length : 0;
 
     return Container(
@@ -1944,9 +1998,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         children: [
           Text(
             _isArabic ? 'النوم' : 'Sleep',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontSize: 14,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontSize: 14),
           ),
           Spacer(),
           Text(
@@ -1989,9 +2043,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontSize: 16,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontSize: 16),
           ),
           Expanded(
             child: Center(
@@ -2025,9 +2079,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     if (allEntries.isEmpty) return SizedBox.shrink();
 
     final totalDays = allEntries.length;
-    final avgMood = allEntries.fold<double>(0, (sum, e) => sum + e.mood) / totalDays;
-    final avgWater = allEntries.fold<double>(0, (sum, e) => sum + e.waterIntake) / totalDays;
-    final totalExercise = allEntries.fold<int>(0, (sum, e) => sum + e.exerciseMinutes);
+    final avgMood =
+        allEntries.fold<double>(0, (sum, e) => sum + e.mood) / totalDays;
+    final avgWater =
+        allEntries.fold<double>(0, (sum, e) => sum + e.waterIntake) / totalDays;
+    final totalExercise = allEntries.fold<int>(
+      0,
+      (sum, e) => sum + e.exerciseMinutes,
+    );
 
     return Container(
       padding: EdgeInsets.all(20),
@@ -2078,7 +2137,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildQuickStatItem(String label, String value, IconData icon, Color color) {
+  Widget _buildQuickStatItem(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Column(
       children: [
         Container(
@@ -2087,11 +2151,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             color: color.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            icon,
-            color: color,
-            size: 24,
-          ),
+          child: Icon(icon, color: color, size: 24),
         ),
         SizedBox(height: 8),
         Text(
@@ -2104,10 +2164,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
+          style: TextStyle(fontSize: 12, color: Colors.grey),
           textAlign: TextAlign.center,
         ),
       ],
@@ -2122,16 +2179,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         Navigator.of(context)
             .push(
               MaterialPageRoute(
-                builder: (context) => DailyLogFlow(), // Always push DailyLogFlow
+                builder:
+                    (context) => DailyLogFlow(), // Always push DailyLogFlow
               ),
             )
             .then((value) {
-          // This block is executed when DailyLogFlow is popped.
-          // Refresh the HomeScreen's state to reflect any new or updated logs.
-          if (mounted) {
-            setState(() {});
-          }
-        });
+              // This block is executed when DailyLogFlow is popped.
+              // Refresh the HomeScreen's state to reflect any new or updated logs.
+              if (mounted) {
+                setState(() {});
+              }
+            });
       },
       backgroundColor: AppTheme.primaryColor,
       label: Text(
@@ -2147,6 +2205,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 }
+
 // History Screen
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -2160,7 +2219,10 @@ class _HistoryScreenState extends State<HistoryScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   List<HealthLogEntry> _entries = [];
-  final String _searchQuery = '';
+
+  // final String _searchQuery = ''; // Replaced by date range
+  DateTimeRange? _selectedDateRange;
+
   bool _isArabic = false;
 
   @override
@@ -2174,13 +2236,9 @@ class _HistoryScreenState extends State<HistoryScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
 
     _animationController.forward();
   }
@@ -2205,36 +2263,32 @@ class _HistoryScreenState extends State<HistoryScreen>
   }
 
   List<HealthLogEntry> get _filteredEntries {
-    if (_searchQuery.isEmpty) return _entries;
+    List<HealthLogEntry> currentEntries = List.from(_entries);
 
-    return _entries.where((entry) {
-      final date = DateFormat('yyyy-MM-dd').format(entry.date);
-      final exerciseType = entry.exerciseType?.toLowerCase() ?? '';
-      return date.contains(_searchQuery.toLowerCase()) ||
-          exerciseType.contains(_searchQuery.toLowerCase());
-    }).toList();
+    if (_selectedDateRange != null) {
+      currentEntries =
+          currentEntries.where((entry) {
+            final entryDate = DateUtils.dateOnly(entry.date);
+            final startDate = DateUtils.dateOnly(_selectedDateRange!.start);
+            final endDate = DateUtils.dateOnly(_selectedDateRange!.end);
+            return !entryDate.isBefore(startDate) &&
+                !entryDate.isAfter(endDate);
+          }).toList();
+    }
+    return currentEntries;
   }
 
   @override
   Widget build(BuildContext context) {
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(_isArabic ? 'السجل التاريخي' : 'History'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: HealthLogSearchDelegate(_entries, _isArabic),
-              );
-            },
-          ),
-        ],
+        actions: [_buildDateRangePicker()],
       ),
       body: FadeTransition(
         opacity: _fadeAnimation,
@@ -2254,9 +2308,8 @@ class _HistoryScreenState extends State<HistoryScreen>
                       SizedBox(height: 16),
                       Text(
                         _isArabic ? 'لا توجد سجلات بعد' : 'No logs yet',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: Colors.grey,
-                        ),
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(color: Colors.grey),
                       ),
                       SizedBox(height: 8),
                       Text(
@@ -2286,6 +2339,35 @@ class _HistoryScreenState extends State<HistoryScreen>
     );
   }
 
+  Widget _buildDateRangePicker() {
+    return IconButton(
+      icon: Icon(Icons.date_range),
+      tooltip: _isArabic ? 'تحديد نطاق التاريخ' : 'Select Date Range',
+      onPressed: () async {
+        final now = DateTime.now();
+        final picked = await showDateRangePicker(
+          context: context,
+          firstDate: DateTime(now.year - 5),
+          // Allow selection up to 5 years ago
+          lastDate: now,
+          initialDateRange:
+              _selectedDateRange ??
+              DateTimeRange(start: now.subtract(Duration(days: 7)), end: now),
+        );
+        if (picked != null && picked != _selectedDateRange) {
+          setState(() {
+            _selectedDateRange = picked;
+          });
+        } else if (picked == null && _selectedDateRange != null) {
+          // Allow clearing the filter
+          setState(() {
+            _selectedDateRange = null;
+          });
+        }
+      },
+    );
+  }
+
   Widget _buildHistoryCard(HealthLogEntry entry, int index, bool isTablet) {
     return Container(
       margin: EdgeInsets.only(bottom: 16),
@@ -2295,10 +2377,7 @@ class _HistoryScreenState extends State<HistoryScreen>
         builder: (context, value, child) {
           return Transform.translate(
             offset: Offset(0, 50 * (1 - value)),
-            child: Opacity(
-              opacity: value,
-              child: child,
-            ),
+            child: Opacity(opacity: value, child: child),
           );
         },
         child: Card(
@@ -2318,9 +2397,12 @@ class _HistoryScreenState extends State<HistoryScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        DateFormat(_isArabic ? 'dd/MM/yyyy' : 'MMM dd, yyyy')
-                            .format(entry.date),
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        DateFormat(
+                          _isArabic ? 'dd/MM/yyyy' : 'MMM dd, yyyy',
+                        ).format(entry.date),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.headlineSmall?.copyWith(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -2413,10 +2495,7 @@ class _HistoryScreenState extends State<HistoryScreen>
         SizedBox(height: 2),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 10,
-            color: color.withOpacity(0.8),
-          ),
+          style: TextStyle(fontSize: 10, color: color.withOpacity(0.8)),
         ),
       ],
     );
@@ -2460,8 +2539,9 @@ class _HistoryScreenState extends State<HistoryScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  DateFormat(_isArabic ? 'dd MMMM yyyy' : 'MMMM dd, yyyy')
-                      .format(entry.date),
+                  DateFormat(
+                    _isArabic ? 'dd MMMM yyyy' : 'MMMM dd, yyyy',
+                  ).format(entry.date),
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 SizedBox(height: 24),
@@ -2497,7 +2577,12 @@ class _HistoryScreenState extends State<HistoryScreen>
     );
   }
 
-  Widget _buildDetailRow(String label, String value, IconData icon, Color color) {
+  Widget _buildDetailRow(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 12),
       child: Row(
@@ -2516,17 +2601,11 @@ class _HistoryScreenState extends State<HistoryScreen>
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
               ),
               Text(
                 value,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -2536,49 +2615,54 @@ class _HistoryScreenState extends State<HistoryScreen>
   }
 
   void _editEntry(HealthLogEntry entry) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => EditEntryScreen(entry: entry),
-      ),
-    ).then((_) {
-      _loadEntries(); // Refresh the list
-    });
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) => EditEntryScreen(entry: entry),
+          ),
+        )
+        .then((_) {
+          _loadEntries(); // Refresh the list
+        });
   }
 
   void _deleteEntry(HealthLogEntry entry) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(_isArabic ? 'حذف السجل' : 'Delete Entry'),
-        content: Text(
-          _isArabic
-              ? 'هل أنت متأكد من حذف سجل ${DateFormat('dd/MM/yyyy').format(entry.date)}؟'
-              : 'Are you sure you want to delete the entry for ${DateFormat('MMM dd, yyyy').format(entry.date)}?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(_isArabic ? 'إلغاء' : 'Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              await HealthLogService.deleteEntry(entry);
-              Navigator.of(context).pop();
-              _loadEntries();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(_isArabic ? 'تم حذف السجل' : 'Entry deleted'),
-                  backgroundColor: AppTheme.accentColor,
-                ),
-              );
-            },
-            child: Text(
-              _isArabic ? 'حذف' : 'Delete',
-              style: TextStyle(color: AppTheme.errorColor),
+      builder:
+          (context) => AlertDialog(
+            title: Text(_isArabic ? 'حذف السجل' : 'Delete Entry'),
+            content: Text(
+              _isArabic
+                  ? 'هل أنت متأكد من حذف سجل ${DateFormat('dd/MM/yyyy').format(entry.date)}؟'
+                  : 'Are you sure you want to delete the entry for ${DateFormat('MMM dd, yyyy').format(entry.date)}?',
             ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(_isArabic ? 'إلغاء' : 'Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await HealthLogService.deleteEntry(entry);
+                  Navigator.of(context).pop();
+                  _loadEntries();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        _isArabic ? 'تم حذف السجل' : 'Entry deleted',
+                      ),
+                      backgroundColor: AppTheme.accentColor,
+                    ),
+                  );
+                },
+                child: Text(
+                  _isArabic ? 'حذف' : 'Delete',
+                  style: TextStyle(color: AppTheme.errorColor),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }
@@ -2591,12 +2675,14 @@ class HealthLogSearchDelegate extends SearchDelegate<String> {
   HealthLogSearchDelegate(this.entries, this.isArabic);
 
   @override
-  String get searchFieldLabel => isArabic ? 'بحث في السجلات' : 'Search logs';
+  String get searchFieldLabel =>
+      isArabic ? 'بحث حسب نوع التمرين' : 'Search by exercise type';
 
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
+        tooltip: isArabic ? 'مسح' : 'Clear',
         icon: Icon(Icons.clear),
         onPressed: () {
           query = '';
@@ -2608,6 +2694,7 @@ class HealthLogSearchDelegate extends SearchDelegate<String> {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
+      tooltip: isArabic ? 'رجوع' : 'Back',
       icon: Icon(Icons.arrow_back),
       onPressed: () {
         close(context, '');
@@ -2626,12 +2713,12 @@ class HealthLogSearchDelegate extends SearchDelegate<String> {
   }
 
   Widget _buildSearchResults(BuildContext context) {
-    final filteredEntries = entries.where((entry) {
-      final date = DateFormat('yyyy-MM-dd').format(entry.date);
-      final exerciseType = entry.exerciseType?.toLowerCase() ?? '';
-      return date.contains(query.toLowerCase()) ||
-          exerciseType.contains(query.toLowerCase());
-    }).toList();
+    final filteredEntries =
+        entries.where((entry) {
+          final exerciseType = entry.exerciseType?.toLowerCase() ?? '';
+          // Only filter by exercise type now
+          return exerciseType.contains(query.toLowerCase());
+        }).toList();
 
     if (filteredEntries.isEmpty) {
       return Center(
@@ -2646,9 +2733,9 @@ class HealthLogSearchDelegate extends SearchDelegate<String> {
             SizedBox(height: 16),
             Text(
               isArabic ? 'لا توجد نتائج' : 'No results found',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: Colors.grey,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineMedium?.copyWith(color: Colors.grey),
             ),
           ],
         ),
@@ -2667,16 +2754,19 @@ class HealthLogSearchDelegate extends SearchDelegate<String> {
               child: Text(_getMoodEmoji(entry.mood)),
             ),
             title: Text(
-              DateFormat(isArabic ? 'dd/MM/yyyy' : 'MMM dd, yyyy')
-                  .format(entry.date),
+              DateFormat(
+                isArabic ? 'dd/MM/yyyy' : 'MMM dd, yyyy',
+              ).format(entry.date),
             ),
             subtitle: Text(
               '${isArabic ? 'الماء' : 'Water'}: ${entry.waterIntake.round()} | '
-                  '${isArabic ? 'التمرين' : 'Exercise'}: ${entry.exerciseMinutes}m | '
-                  '${isArabic ? 'النوم' : 'Sleep'}: ${entry.sleepHours.toStringAsFixed(1)}h',
+              '${isArabic ? 'التمرين' : 'Exercise'}: ${entry.exerciseMinutes}m | '
+              '${isArabic ? 'النوم' : 'Sleep'}: ${entry.sleepHours.toStringAsFixed(1)}h',
             ),
             onTap: () {
               close(context, '');
+              // Optionally, navigate to the details of this entry or perform other action
+              // For now, it just closes the search.
             },
           ),
         );
@@ -2709,7 +2799,14 @@ class _EditEntryScreenState extends State<EditEntryScreen> {
   bool _isArabic = false;
 
   final List<String> _exerciseTypes = [
-    'Walking', 'Running', 'Cycling', 'Swimming', 'Yoga', 'Gym', 'Dancing', 'Other'
+    'Walking',
+    'Running',
+    'Cycling',
+    'Swimming',
+    'Yoga',
+    'Gym',
+    'Dancing',
+    'Other',
   ];
 
   @override
@@ -2754,8 +2851,9 @@ class _EditEntryScreenState extends State<EditEntryScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              DateFormat(_isArabic ? 'dd MMMM yyyy' : 'MMMM dd, yyyy')
-                  .format(widget.entry.date),
+              DateFormat(
+                _isArabic ? 'dd MMMM yyyy' : 'MMMM dd, yyyy',
+              ).format(widget.entry.date),
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             SizedBox(height: 32),
@@ -2803,10 +2901,7 @@ class _EditEntryScreenState extends State<EditEntryScreen> {
         Center(
           child: Text(
             '${_getMoodEmoji(_mood)} ${_mood.toStringAsFixed(1)}/5',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
         ),
       ],
@@ -2844,10 +2939,7 @@ class _EditEntryScreenState extends State<EditEntryScreen> {
         Center(
           child: Text(
             '${_waterIntake.round()} ${_isArabic ? 'كوب' : 'glasses'} (${(_waterIntake * 250).round()}ml)',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
         ),
       ],
@@ -2856,64 +2948,59 @@ class _EditEntryScreenState extends State<EditEntryScreen> {
 
   Widget _buildExerciseSection() {
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _isArabic ? 'التمرين' : 'Exercise',
-            style: Theme.of(context).textTheme.headlineSmall,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _isArabic ? 'التمرين' : 'Exercise',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+        SizedBox(height: 16),
+        DropdownButtonFormField<String>(
+          value: _exerciseType,
+          items:
+              _exerciseTypes.map((String type) {
+                return DropdownMenuItem<String>(value: type, child: Text(type));
+              }).toList(),
+          onChanged: (value) {
+            if (value != null) {
+              setState(() {
+                _exerciseType = value;
+              });
+            }
+          },
+          decoration: InputDecoration(
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
-          SizedBox(height: 16),
-          DropdownButtonFormField<String>(
-            value: _exerciseType,
-            items: _exerciseTypes.map((String type) {
-              return DropdownMenuItem<String>(
-                value: type,
-                child: Text(type),
-              );
-            }).toList(),
+        ),
+        SizedBox(height: 16),
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor: AppTheme.accentColor,
+            thumbColor: AppTheme.accentColor,
+            trackHeight: 8.0, // Make slider thicker
+          ),
+          child: Slider(
+            value: _exerciseMinutes.toDouble(),
+            min: 0,
+            max: 180,
+            divisions: 18,
+            label: '${_exerciseMinutes.round()} min',
             onChanged: (value) {
-              if (value != null) {
-                setState(() {
-                  _exerciseType = value;
-                });
-              }
+              setState(() {
+                _exerciseMinutes = value.round();
+              });
             },
-            decoration: InputDecoration(
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            ),
           ),
-          SizedBox(height: 16),
-          SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              activeTrackColor: AppTheme.accentColor,
-              thumbColor: AppTheme.accentColor,
-              trackHeight: 8.0, // Make slider thicker
-            ),
-            child: Slider(
-              value: _exerciseMinutes.toDouble(),
-              min: 0,
-              max: 180,
-              divisions: 18,
-              label: '${_exerciseMinutes.round()} min',
-              onChanged: (value) {
-                setState(() {
-                  _exerciseMinutes = value.round();
-                });
-              },
-            ),
+        ),
+        Center(
+          child: Text(
+            '$_exerciseMinutes ${_isArabic ? 'دقيقة' : 'minutes'}',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
-          Center(
-            child: Text(
-              '$_exerciseMinutes ${_isArabic ? 'دقيقة' : 'minutes'}',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      );
+        ),
+      ],
+    );
   }
 
   Widget _buildSleepSection() {
@@ -2935,7 +3022,8 @@ class _EditEntryScreenState extends State<EditEntryScreen> {
             value: _sleepHours,
             min: 0,
             max: 12,
-            divisions: 24, // 0.5 hour increments
+            divisions: 24,
+            // 0.5 hour increments
             label: '${_sleepHours.toStringAsFixed(1)} hours',
             onChanged: (value) {
               setState(() {
@@ -2947,10 +3035,7 @@ class _EditEntryScreenState extends State<EditEntryScreen> {
         Center(
           child: Text(
             '${_sleepHours.toStringAsFixed(1)} ${_isArabic ? 'ساعات' : 'hours'}',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
         ),
       ],
@@ -2959,7 +3044,8 @@ class _EditEntryScreenState extends State<EditEntryScreen> {
 
   void _saveEntry() async {
     final updatedEntry = HealthLogEntry(
-      date: widget.entry.date, // Keep the original date
+      date: widget.entry.date,
+      // Keep the original date
       mood: _mood,
       waterIntake: _waterIntake,
       exerciseMinutes: _exerciseMinutes,
@@ -2980,5 +3066,115 @@ class _EditEntryScreenState extends State<EditEntryScreen> {
   String _getMoodEmoji(double mood) {
     List<String> emojis = ['😢', '😕', '😐', '😊', '😄'];
     return emojis[(mood - 1).round().clamp(0, 4)];
+  }
+}
+
+class AnimatedGreetingCard extends StatefulWidget {
+  final bool isArabic;
+  final String timeOfDay;
+
+  const AnimatedGreetingCard({
+    Key? key,
+    required this.isArabic,
+    required this.timeOfDay,
+  }) : super(key: key);
+
+  @override
+  _AnimatedGreetingCardState createState() => _AnimatedGreetingCardState();
+}
+
+class _AnimatedGreetingCardState extends State<AnimatedGreetingCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 8),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        final angle = _controller.value * 2 * math.pi;
+        return Transform.scale(
+          scale: 1 + math.sin(angle) * 0.005, // very subtle pulse
+          child: Card(
+            elevation: 12,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Container(
+              padding: EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color.lerp(
+                      AppTheme.primaryColor,
+                      AppTheme.secondaryColor,
+                      (math.sin(angle) + 1) / 2,
+                    )!,
+                    Color.lerp(
+                      AppTheme.secondaryColor,
+                      AppTheme.primaryColor,
+                      (math.cos(angle) + 1) / 2,
+                    )!,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primaryColor.withOpacity(0.25),
+                    blurRadius: 15 + math.sin(angle) * 2,
+                    offset: Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.isArabic
+                        ? 'مساء الخير!'
+                        : 'Good ${widget.timeOfDay}!',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    widget.isArabic
+                        ? 'كيف كان يومك اليوم؟'
+                        : 'How has your day been?',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white.withOpacity(0.95),
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
