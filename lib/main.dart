@@ -1474,7 +1474,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             : now.hour < 17
             ? 'Afternoon'
             : 'Evening';
-    //todo
     //     return Card(
     //       elevation: 8.0,
     //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
