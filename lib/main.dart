@@ -226,7 +226,7 @@ class AppTheme {
         statusBarBrightness: Brightness.light, // For iOS
       ),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       elevation: 8,
       shadowColor: Colors.black12,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
