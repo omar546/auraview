@@ -410,7 +410,10 @@ class HealthLogService {
   static List<HealthLogEntry> getWeeklyEntries() {
     final now = DateTime.now();
     final weekAgo = now.subtract(Duration(days: 7));
-    return _box.values.where((entry) => entry.date.isAfter(weekAgo)).toList()
+    // Ensure that 'weekAgo' is at the beginning of that day to include all entries from that day.
+    final startOfWeekAgo = DateTime(weekAgo.year, weekAgo.month, weekAgo.day);
+    return _box.values.where((entry) =>
+    entry.date.isAfter(startOfWeekAgo) || entry.date.isAtSameMomentAs(startOfWeekAgo)).toList()
       ..sort((a, b) => a.date.compareTo(b.date));
   }
 
