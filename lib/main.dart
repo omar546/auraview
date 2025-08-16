@@ -275,7 +275,7 @@ class AppTheme {
         statusBarBrightness: Brightness.dark, // For iOS
       ),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       elevation: 8,
       shadowColor: Colors.black26,
       color: Color(0xFF2C2F36),
