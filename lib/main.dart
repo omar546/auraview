@@ -104,6 +104,7 @@ class _AuraViewAppState extends State<AuraViewApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'AURA',
+      debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: _themeMode,
