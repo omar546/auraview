@@ -19,4 +19,4 @@ The latest **APK** is available in the [Releases section](../../releases).
 ---
 
 ## 🌐 Web Version
-> _Add your web app link here_
+[here](https://auraview-phi.vercel.app/)
