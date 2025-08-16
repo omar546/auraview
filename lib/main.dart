@@ -102,7 +102,7 @@ class _AuraViewAppState extends State<AuraViewApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AuraView',
+      title: 'AURA',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: _themeMode,
@@ -462,7 +462,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   final List<OnboardingPage> _pages = [
     OnboardingPage(
-      title: 'Welcome to AuraView',
+      title: 'Welcome to AURA',
       subtitle: 'Track your daily wellness journey with beautiful insights',
       icon: Icons.health_and_safety_outlined,
       color: AppTheme.primaryColor,
