@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -218,6 +219,11 @@ class AppTheme {
         fontSize: 20,
         fontWeight: FontWeight.w600,
       ),
+      systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith( // For light theme
+        statusBarColor: Colors.transparent, // Or a specific light color
+        statusBarIconBrightness: Brightness.dark, // For Android
+        statusBarBrightness: Brightness.light, // For iOS
+      ),
     ),
     cardTheme: CardTheme(
       elevation: 8,
@@ -261,6 +267,11 @@ class AppTheme {
         color: Colors.white,
         fontSize: 20,
         fontWeight: FontWeight.w600,
+      ),
+      systemOverlayStyle: SystemUiOverlayStyle.light.copyWith( // For dark theme
+        statusBarColor: Colors.transparent, // Or a specific dark color
+        statusBarIconBrightness: Brightness.light, // For Android
+        statusBarBrightness: Brightness.dark, // For iOS
       ),
     ),
     cardTheme: CardTheme(
@@ -1560,6 +1571,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           context,
           _isDarkMode ? ThemeMode.dark : ThemeMode.light,
         );
+        // Update status bar style based on the new theme
+        SystemChrome.setSystemUIOverlayStyle(
+          _isDarkMode
+              ? AppTheme.darkTheme.appBarTheme.systemOverlayStyle!
+              : AppTheme.lightTheme.appBarTheme.systemOverlayStyle!,
+        );
+
+
         _savePreferences();
         break;
       case 'language':
@@ -1573,6 +1592,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         }
         _savePreferences();
         break;
+
+
+
+
+
       case 'history':
         Navigator.of(
           context,
