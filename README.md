@@ -2,9 +2,7 @@
 <img width="250" height="250" alt="AURA LOGO" src="https://github.com/user-attachments/assets/22281dcf-c4f1-41e1-9d21-c124ccaf4c27" />
 
 AURA is a modern Flutter application for **tracking and journaling your daily habits and wellbeing**.  
-Log your **sleep**, **water intake**, **exercise**, and **mood** in a beautifully animated interface.  
-With dynamic SVG-based themes and always-on animations, AURA turns habit tracking into an enjoyable, visually engaging experience.
-
+Log your **sleep**, **water intake**, **exercise**, and **mood** in a beautifully animated interface. 
 
 ---
 
