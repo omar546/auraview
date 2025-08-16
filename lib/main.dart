@@ -1365,6 +1365,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool _isDarkMode = true; // Start with dark mode
   bool _isArabic = false;
   int _selectedPeriod = 0; // 0: Week, 1: Month
+  final ScrollController _scrollController = ScrollController();
+  bool _showFab = true;
 
   @override
   void initState() {
@@ -1387,11 +1389,26 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
 
     _animationController.forward();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    // Check if the user is scrolling down
+    if (_scrollController.position.pixels > 50 && _showFab) { // 50 is an arbitrary threshold
+      setState(() {
+        _showFab = false;
+      });
+    } else if (_scrollController.position.pixels <= 50 && !_showFab) {
+      setState(() {
+        _showFab = true;
+      });
+    }
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -1434,7 +1451,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           opacity: _fadeAnimation,
           child: SlideTransition(
             position: _slideAnimation,
-            child: SingleChildScrollView(
+            child: SingleChildScrollView( // Make sure this is the scrollable view
+              controller: _scrollController, // Assign the controller here
               padding: EdgeInsets.all(isTablet ? 24 : 16),
               child: isWideScreen
                   ? _buildWideScreenLayout(isTablet)
@@ -1442,7 +1460,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
           ),
         ),
-        floatingActionButton: _buildFAB(),
+        floatingActionButton: _showFab ? _buildFAB() : null,
       ),
     );
   }
