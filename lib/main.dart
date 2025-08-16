@@ -2052,6 +2052,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               BarChartData(
                 gridData: FlGridData(show: false),
                 titlesData: FlTitlesData(show: false),
+                extraLinesData: ExtraLinesData(
+                  horizontalLines: [
+                    HorizontalLine(
+                      y: 8, // The goal line for 8 glasses
+                      color: AppTheme.warningColor.withOpacity(0.8),
+                      strokeWidth: 2,
+                      dashArray: [20, 10], // Make it a dashed line
+                    ),
+                  ],
+                ),
                 borderData: FlBorderData(show: false),
                 barGroups:
                 entries
